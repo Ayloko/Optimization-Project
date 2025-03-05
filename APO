@@ -1,0 +1,305 @@
+$title Advanced Process Optimisation Project 
+$onText
+Finding the optimum solvent for CO2 capture - only for monocyclic groups
+$offText
+ 
+Set
+
+    i 'all functional groups'                      /'CH2NH2','CHNH2','CH3NH','CH2NH','CHNH','CH3N','CH2N',
+                                                   'CH3','CH2','CCN','CHCOO','CH3COO','CH2COO','OH','CONH2',
+                                                   'COOH','CH2CN','CHCN','CHNOH','OCH2CH2OH','OCHCH2OH',
+                                                   'OCH2CHOH','-O-OH','CONHCH3','CON(CH3)2','CH3CO','CH2CO','CHO',
+                                                   'HCOO','CH2NO2','CHNO2','CNO2','ONO2','CO3','C2H3O','C2H2O','C'/
+    amines(i) 'all amine groups'                   /'CH2NH2','CHNH2','CH3NH','CH2NH','CHNH','CH3N','CH2N',
+                                                   'CONH2','COOH','CH2CN','CHCN','CHNOH','-O-OH','CONHCH3',
+                                                   'CON(CH3)2','CH2NO2','CHNO2','CNO2',
+                                                   'ONO2'/
+    hydroxide(i) 'all hydroxide containing groups' /'OH','CHNOH','OCH2CH2OH','OCHCH2OH','OCH2CHOH'/
+    j 'group contributions parameters'             /Tbi, Tmi, Vmi, Cpi, sd, sp, sh/
+    l 'properties'                                 /RED, Cp, rho/
+    m 'functional groups replica'                  /'CH2NH2','CHNH2','CH3NH','CH2NH','CHNH','CH3N','CH2N',
+                                                   'CH3','CH2','CCN',
+                                                   'CHCOO','CH3COO','CH2COO','OH','CONH2','COOH','CH2CN','CHCN',
+                                                   'CHNOH','OCH2CH2OH','OCHCH2OH','OCH2CHOH','-O-OH','CONHCH3',
+                                                   'CON(CH3)2','CH3CO','CH2CO','CHO',
+                                                   'HCOO','CH2NO2','CHNO2','CNO2','ONO2','CO3','C2H3O','C2H2O'/  
+;
+
+Parameter
+    V(i) Valencies                                 /'CH2NH2' 1,'CHNH2' 2,'CH3NH' 1,'CH2NH' 2,'CHNH' 3,'CH3N' 2,
+                                                   'CH2N' 3,'CH3' 1,'CH2' 2,'CCN' 3,'CHCOO' 3,'CH3COO' 2,'CH2COO' 1,
+                                                   'OH' 1,'CONH2' 3,'COOH' 1,'CH2CN' 1,'CHCN' 2,'CHNOH' 3,
+                                                   'OCH2CH2OH' 1,'OCHCH2OH' 0,'OCH2CHOH' 2,'-O-OH' 1,
+                                                   'CONHCH3' 3,'CON(CH3)2' 3,'CH3CO' 1,
+                                                   'CH2CO' 2,'CHO' 1,'HCOO' 1,'CH2NO2' 2,'CHNO2' 3,
+                                                   'CNO2' 4,'ONO2' 2,'CO3' 2,'C2H3O' 1,'C2H2O' 0, 'C' 4/
+
+************************************************************************
+*Allocating equal weights in Q2 and testing for different weights in Q3*
+************************************************************************
+
+** ENSURE THAT THE RELEVANT ARE COMMENTED OUT TO EXECUTE Q3** 
+ 
+    W(l) Weights                                   /RED 0.33, Cp  0.33, rho 0.33/
+*   Trial 1
+*   W(l) Weights                                   /RED 0.90, Cp  0.05, rho 0.05/
+*   Trial 2
+*   W(l) Weights                                   /RED 0.05, Cp  0.90, rho 0.05/
+*   Trial 3
+*   W(l) Weights                                   /RED 0.05, Cp  0.05, rho 0.90/
+*   Trial 4
+*   W(l) Weights                                   /RED 0.10, Cp  0.10, rho 0.80/
+*   Trial 5
+*   W(l) Weights                                   /RED 0.15, Cp  0.15, rho 0.70/
+
+A(i,j) property-group parameters
+
+*Hansen Parameter values of CO2 - obtained from ref [5] supplementary material
+    disp_coh_density /15.7/
+    pol_coh_density / 5.2/
+    hyd_bond_density /5.8/
+*Hansen radius constant R0
+    Hansen_radius /3.3/
+
+*Temperataure constant
+    tm_o /143.57/
+*in kelvin
+    tb_o /244.5165/
+*in kelvin
+
+* Incremental change to avoid division by zero
+    epsi /1e-6/
+
+* Objective function parameters to normalise - obtained from ref [5]
+    RED_min /1e-5/
+    RED_max /6/
+    rho_min /9.823/
+    rho_max /24.558/
+* density of MEA - as MEA is an ideal solvent for CO2 absorption
+    cp_min /110/
+    cp_max /500/
+
+;
+
+
+Table A(i,j) contribution parameters
+
+                     'cpi'   'Tbi'    'Tmi'    'sd'      'sp'      'sh'      'Vmi'
+'CH2NH2'              92.8    2.3212   3.4368   8.1717    5.2964    6.7984    0.0281
+'CHNH2'               100.41  1.5629   37.8806  -0.3287   0.6603    2.8953    0.0207
+'CH3NH'               96.27   1.9861   2.7205   8.1301    3.4132    7.2551    0.0282
+'CH2NH'               78.95   1.3838   2.0673   0.2374    0.1072    1.4183    0.026
+'CHNH'                86.56   0.7116   1.6571   -7.7581   -3.5886   -2.2824   0.0209
+'CH3N'                52.97   1.0505   0.9396   0.426     -0.5166   2.4585    0.0259
+'CH2N'                35.65   0.4199   -0.1982  -6.6418   0.0847    -7.3014   0.0187
+'CH3'                 50.82   0.8853   0.6699   7.5697    1.9996    2.2105    0.0241
+'CH2'                 33.5    0.5815   0.2992   -0.0018   -0.1492   -0.215    0.0165
+'CCN'                 7.11    2.0085   2.6597   -7.0171   0.3807    0.4757    0.0232
+'CHCOO'               83.97   1.5283   1.013    -7.3196   -1.8452   -1.1517   0.0291
+'CH3COO'              93.68   2.5805   2.4227   8.022     2.848     5.0132    0.0412
+'CH2COO'              76.36   2.1808   1.5439   0.4586    1.4477    2.7824    0.0365
+'OH'                  59.74   2.1385   3.2702   8.0236    4.9598    11.8005   0.0044
+'CONH2'               81.97   5.3258   12.1011  9.0445    9.3434    10.6398   0.0142
+'COOH'                82.41   8.4676   3.5123   7.5917    4.0158    7.1886    0.0244
+'CH2CN'               38.13   8.6869   9.9443   3.3144    3.5887    2.7022    0.0309
+'CHCN'                45.74   2.8741   1.837    1.3373    4.8107    1.7584    0.0267
+'CHNOH'               103     3.7873   4.1895   8.7303    2.0004    17.9895   0.0224
+'OCH2CH2OH'           146.93  3.855    2.4711   8.3416    5.8162    9.9562    0.0416
+'OCHCH2OH'            154.54  3.1854   10.723   0.1491    0.0056    5.1167    0.0371
+'OCH2CHOH'            154.54  2.8513   1.9288   0.238     0.2947    4.8512    0.0394
+'-O-OH'               79.93   3.0402   4.1185   7.4303    13.0004   27.7895   0.0103
+'CONHCH3'             140.93  4.2507   6.4777   7.4303    2.3004    3.4895    0.038
+'CON(CH3)2'           126.46  4.7928   3.7968   9.032     9.1995    6.8046    0.0529
+'CH3CO'               91.12   2.6245   3.1357   8.163     6.052     3.4394    0.0345
+'CH2CO'               73.8    2.0151   2.9007   0.5557    0.7632    -0.0788   0.0288
+'CHO'                 78.93   2.1663   2.9884   7.7699    7.9891    5.3761    0.0169
+'HCOO'                99.12   2.2411   2.3697   7.9333    5.1029    6.8448    0.0259
+'CH2NO2'              93.66   3.7481   2.8903   8.9684    11.3856   3.1398    0.0327
+'CHNO2'               83.64   2.944    0.8742   0.9349    6.5029    0.8294    0.0263
+'CNO2'                62.64   2.2443   6.6444   -6.623    -0.9748   -0.5293   0.0513
+'ONO2'                60.16   2.7717   2.5055   8.0429    7.3747    2.7871    0.028
+'CO3'                 80.68   2.2704   2.8869   0.1623    1.2499    2.3941    0.0225
+'C2H3O'               91.12   2.5872   1.424    9.2764    5.6342    7.9801    0.0305
+'C2H2O'               58.03   1.9387   -2.11    0.9605    0.8007    2.0651    0.029
+'C'                   2.48    -0.4985  -0.043   -15.4498  -4.7191   -6.4821   0.0007
+
+;
+
+*   Cpi = J/molK
+*   Tbi,Tmi = K
+*   sd,sp,sh = MPa^0.5
+*   Vmi = m3/kmol
+*   rho = kmol/m3
+
+
+Variables 
+    RED 'Relative Energy Difference'
+    Ra  'distance measure'
+    n(i) 'molecular groups'
+    bond(m) 'replica - defined for the bonding rule to avoid complication with n(i) in other equations'
+    p(l) 'normalised property groups in the Objective function'
+    Tc 'critical temperature'
+    Tb 'boiling point'
+    Tm 'melting point'
+    cp 'heat capacity of the solvent'
+    rho 'density'
+    OF 'the objective function'
+    
+;
+
+Integer variables n 'Limit imposed on number of building block i allowed in solvent structure';
+    n.lo(i)=0;
+    n.up(i)=10;
+
+Binary variable y(i) 'condition if building block is present, y = 1, y = 0';
+
+** Q3 references the weights being optimised by GAMs simulation, add 'M(l) to the defined binary variables to execute' **
+
+* 'Initial guess - these are property values of MEA'
+    n.l(i) = 1;    
+    y.l(i) = 1;    
+    rho.l = 1.5833;     
+    cp.l = 246.79;     
+    Tb.l = 444.15;     
+    Tm.l = 284.15;     
+    RED.l = 5.619;
+    OF.l = 0;
+
+Equations
+    RED_def 'relative energy difference definition'
+    Ra_def  'distance measure definition'
+    octet   'octet rule'
+    bonding 'bonding rule'
+    Cpeq    'heat capacity equation'
+    OF_DEF  'objective function def'
+    rhoeq   'density equation'
+    mp      'melting point equation'
+    bp      'boiling point equation'
+    p_RED_def 'Linking RED to p(l)'
+    p_cp_def  'Linking cp to p(l)'
+    p_rho_def 'Linking rho to p(l)'
+    n_upper_def(i) 'equation stating the upper bound of the number of each building block group i'
+    n_lower_def(i) 'equation stating the lower bound of the number of each building block group i'
+    amine_condition 'equation stating the condition for the minimum number of amine groups'
+    hydroxide_condition 'equation stating the condition for the minimum number of hydroxide groups'
+    
+** ensure that these are commented out to execute Q3 **
+
+*   weights_condition 'allowing the weights to vary - but must sum up to 1'
+*   weight_RED_condition 'ensuring that weight of RED is minimum 0.001 when they are varying'
+*   weight_cp_condition 'ensuring that weight of cp is minimum 0.001 when they are varying'
+*   weight_rho_condition 'ensuring that weight of rho is minimum 0.001 when they are varying'
+;
+************************************************************
+*Upper and lower bound of building block i in each molecule*
+************************************************************
+    n_upper_def(i) ..    n(i) =L= y(i) * n.up(i);
+
+    n_lower_def(i) ..    n(i) =G= y(i); 
+
+******************************
+*RED definition and condition*
+******************************
+    RED_def.. RED =e= Ra / Hansen_radius;
+
+    Ra_def..   Ra =e= sqrt(4*power(disp_coh_density - sum(i, A(i,'sd')*n(i)), 2)+ power(pol_coh_density - sum(i, A(i,'sp')*n(i)), 2)+ power(hyd_bond_density - sum(i, A(i,'sh')*n(i)), 2));
+
+    RED.up = 1;
+
+*********************************************
+* Boiling point and melting point conditions*
+*********************************************
+    Tb.lo = 393 ;
+
+    Tm.up = 313 ;
+
+************
+*octet rule*
+************
+    octet.. sum(i,((2-V(i))*n(i)))-2 =e=0;
+
+*****************************
+*bonding rule and conditions*
+*****************************
+    bonding(i)..    n(i) * (V(i) - 1) + 2 - sum(m, bond(m)) =l= 0;
+
+    amine_condition..   SUM(amines,n(amines)) =g= 1;
+
+    hydroxide_condition..   SUM(hydroxide,n(hydroxide)) =g= 1;
+
+*************
+*Cp Equation*
+*************
+    Cpeq..  sum(i,n(i)*(A(i,'cpi'))) =e= cp;
+
+******************
+*Density equation*
+******************
+    rhoeq..    rho =E= 1/sum(i,y(i)*(A(i, 'Vmi')*n(i)));
+
+*************************
+* Melting point equation*
+*************************
+    mp..   log(sum(i, y(i) * A(i, 'Tmi') * n(i)) + epsi) * tm_o =E= Tm;
+
+************************
+*Boiling point Equation*
+************************
+    bp..   log(sum(i, y(i) * A(i, 'Tbi') * n(i)) + epsi) * tb_o =E= Tb;
+
+*****************************
+*Normalised equations for OF*
+*****************************
+    p_RED_def.. p('RED') =e= W('RED')*((RED - RED_max)/(RED_min - RED_max));
+
+    p_cp_def.. p('cp') =e= W('cp')*((cp - cp_max)/(cp_min - cp_max));
+
+    p_rho_def.. p('rho') =e= W('rho')*((rho - rho_max)/(rho_min - rho_max));
+
+******************************************************
+*Conditions to ensure normalisation within boundaries*
+******************************************************
+    p.up('rho') = 1;
+    p.up('cp') = 1;
+    p.up('RED') = 1;
+    p.lo('rho') = 0;
+    p.lo('cp') = 0;
+    p.lo('RED') = 0;
+    
+
+*****************************
+*Objective function equation*
+*****************************
+    OF_DEF.. p('RED')+p('cp')-p('rho') =E=OF;
+
+****************************************************************************
+*Performance criteria based off ref 5 in CAMD case (Additional constraints)*
+****************************************************************************
+    RED.lo = 10e-5;
+
+    Tb.up = 550;
+
+    Tm.lo = 273;
+
+***************************
+*Varying the weights in Q3*
+***************************
+
+** ensure that these are un-commented to execute Q3 ** 
+
+*   weights_condition.. sum(l,W(l)) =e= 1;
+*   weight_RED_condition.. W('RED') =g= 0.001;
+*   weight_cp_condition.. W('cp') =g= 0.001;
+*   weight_rho_condition.. W('rho') =g= 0.001;
+
+
+Model testing /ALL/;
+option MINLP=BARON;
+option optcr=0;
+option optca=1E-8;
+
+Solve testing minimizing OF using MINLP;
+display RED.l, Tb.l, Tm.l,n.l;
+
+
+
